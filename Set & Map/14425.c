@@ -48,15 +48,16 @@ int main()
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
 
 typedef struct TrieNode {
     struct TrieNode* children[26];  // 알파벳 개수만큼 포인터 배열 선언 => a~z까지의 자식 노드
-    int end;
+    int end;                        // 문자열이 포함되어 있는 지 확인하는 값
 } TrieNode;
 
+// 노드 생성
 TrieNode* create_node() {
-    TrieNode* node = TrieNode* malloc(sizeof(TrieNode));
+    TrieNode* node = (TrieNode*)malloc(sizeof(TrieNode));
     for(int i = 0; i < 26; i++)
     {
         node->children[i] = NULL;
@@ -66,34 +67,37 @@ TrieNode* create_node() {
     return node;
 }
 
+// 트라이에 삽입
 void insert(TrieNode* root, char* str)
 {
     TrieNode* cur = root;
-    for(int i = 0; ; i++)
+    for(int i = 0; str[i]; i++)     // str[i] 형태로, 문자열의 i번째 문자를 나타냄.
     {
         int idx = str[i] - 'a';
-        if(!cur->children[idx]) 
-            cur->children[idx] = create_node;
-        cur = cur->children[idx];
+        if(!cur->children[idx])     // 자식 노드가 0이면 새로 노드를 만든다.
+            cur->children[idx] = create_node();
+        cur = cur->children[idx];   // 다음 문자 위치로 이동
     }
     
     cur->end = 1;
 }
 
+// 트라이에서 검색
 int search(TrieNode* root, char* str)
 {
     TrieNode* cur = root;
-    for(int i = 0; ; i++)
+    for(int i = 0; str[i]; i++)
     {
         int idx = str[i] - 'a';
-        if(!cur->children[idx])
-            return 0;
+        if(!cur->children[idx])     // 자식 노드가 없으면 0을 반환하고 search 함수 종료
+            return 0;                
         cur = cur->children[idx];
     }
     
     return cur->end;
 }
 
+// 재귀를 통해 모든 문자열 메모리 해제
 void free_trie(TrieNode* root)
 {
     for(int i = 0; i < 26; i++)
@@ -124,7 +128,7 @@ int main()
     for(int i = 0; i < M; i++)
     {
         scanf("%s", str);
-        if(search(root, str))
+        if(search(root, str))   // 리턴값이 end의 값이 1이면 count 1 증가
             count++;
     }
 
