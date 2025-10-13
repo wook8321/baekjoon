@@ -22,11 +22,13 @@ int main()
         이렇게 분자와 분모를 각각 계속 곱해가면 overflow 발생
         => 분모에 분자를 바로바로 나누어준다.
         */
+       
         long long res = 1;
 
         for(int j = 0; j < N; j++)
         {
             res = res * (M - j) / (j + 1);
+            // 조합은 항상 정수임. 계속 분모의 값이 커져도 분자에 값이 계속 누적됨.
         }
 
         printf("%lld\n", res);
